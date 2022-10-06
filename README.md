@@ -225,9 +225,9 @@ visible on all other pages. In other words, the `Dashboard`, `About`, and
 
 ```jsx
 <Route path="/" element={<App />}>
-  <Route path="/dashboard" element={<Dashboard />} />
-  <Route path="/about" element={<About />} />
-  <Route path="/login" element={<Login />} />
+  <Route path="dashboard" element={<Dashboard />} />
+  <Route path="about" element={<About />} />
+  <Route path="login" element={<Login />} />
 </Route>
 ```
 
@@ -238,55 +238,67 @@ paths are nested as well.
 
 Meaning, child routes will take on the parent route's path as a prefix. In our
 example, that would mean `Dashboard`'s full path is technically:
-`/ + /dashboard = //dashboard`. As we can see, the leading `/` in front of
-`dashboard` is unecessary, so we can refactor our code to remove those leading
-`/` from the children:
+`/ + dashboard = /dashboard`. If the parent `App`'s path was `/app` instead,
+then `Dashboard`'s full path would be `/app + dashboard = /app/dashboard`.
+
+> **Note**: When nesting routes, the leading `/` in front of the nested paths
+> are unecessary. React Router will add those in automatically.
+
+### Outlet
+
+We've nested the routes, but now we can't our nested components. Even if we try
+going to `/dashboard`, all we see is the header that says `My App!`, but we
+don't see the `Dashboard!` text. That's because for nesting to work, we need to
+provide the parent component with an _outlet_ in which to display the nested
+components.
+
+React Router provides an `Outlet` component to do exactly that. All we need to
+do is import it into the parent component, and render it wherever we want the
+nested components to show up.
 
 ```jsx
-<Route path="/" element={<App />}>
-  <Route path="dashboard" element={<Dashboard />} />
-  <Route path="about" element={<About />} />
-  <Route path="login" element={<Login />} />
-</Route>
+import ReactDOM from "react-dom";
+import "./index.css";
+// Step 1. Import the Outlet component
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+
+// ... all the other components
+
+function App() {
+  return (
+    <div>
+      <h1 className="app-header">My App!</h1>
+      {/* Step 2. Render the Outlet component where we want the nested components to render */}
+      <Outlet />
+    </div>
+  );
+}
+
+// ... DOM render
 ```
 
-In this particular case the leading `/` doesn't break anything, so,
-functionally, the removal changes nothing. However, removing the leading `/`
-becomes important when the parent path is something other than just the root
-`/`.
-
-Let's actually try that out by changing the `App` path to `/app` and adding back
-the leading `/` to `Dashboard`:
-
-```jsx
-<Route path="/app" element={<App />}>
-  <Route path="/dashboard" element={<Dashboard />} />
-  <Route path="about" element={<About />} />
-  <Route path="login" element={<Login />} />
-</Route>
-```
-
-Uh-oh, that broke our app. Nothing loads anymore! Remove the leading `/` again
-from `Dashboard`. This now means our path to `Dashboard` is
-`/app + dashboard = /app/dashboard`. React Router will automatically add the `/`
-where necessary between the two paths.
-
-Try going to `http://localhost:3000/app/dashboard` to check it out! It should
-work just fine now.
+When we go to `http://localhost:3000/dashboard` or any of the other nested
+routes now, we should see _both_ the `My App!` header and the appropriate
+component.
 
 ### Recap
 
-<!-- Update this with nested route stuff -->
+We've already learned a lot of stuff so far. Let's take some time here to recap
+what we've learned:
 
-- We imported the `BrowserRouter` and the `Route` components from the
+- We imported the `BrowserRouter`, `Routes`, and `Route` components from the
   `react-router-dom` package into our `index.js` file
 - We wrapped `BrowserRouter` around the top level component in our React
   application
-- We defined three possible routes, each of which is doing the following:
+- Inside that `BrowserRouter`, we then wrapped `Routes` around all our
+  individual `Route` components.
+- We defined four possible routes with `Route`, each of which is doing the
+  following:
   - defining what URLs to match on
   - defining what component should be rendered, should a match return true
-  - for our `/` route, setting a prop of `exact`, which ensures that you will
-    only see the component if you go to the exact path.
+- We nested three of our routes inside one parent route.
+  - We imported and used the `Outlet` component to tell the parent component
+    where to render the nested ones.
 
 We have made great progress so far!
 
