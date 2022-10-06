@@ -16,11 +16,12 @@ body {
 .nav-bar {
   width: 100%;
   background-color: beige;
+  text-align: center;
 }
 
 .nav-link {
   display: inline-block;
-  width: 23.65%;
+  width: 10%;
   padding: 10px;
   text-align: center;
   text-decoration: none;
@@ -28,6 +29,6 @@ body {
   color: darkseagreen;
 }
 
-/* .active {
+.active {
   background-color: rgb(59, 60, 60);
-} */
+}
