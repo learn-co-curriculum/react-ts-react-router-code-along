@@ -399,11 +399,12 @@ need to define the actual classes. Feel free to copy and paste:
 .nav-bar {
   width: 100%;
   background-color: beige;
+  text-align: center;
 }
 
 .nav-link {
   display: inline-block;
-  width: 23.65%;
+  width: 10%;
   padding: 10px;
   text-align: center;
   text-decoration: none;
@@ -458,8 +459,133 @@ Pretty nifty!
 
 Now that we've added several components into our app, our `index.tsx` file has
 grown considerably. Let's refactor by removing the components we defined in
-`index.js` and placing them in their own files in `src/components`. You can also
-see the completed version of this code in the solution branch.
+`index.js` and placing them in their own files in `src/components`. Below, we've
+separated all the components into their own files. You can also see the
+completed version of this code in the `solution` branch.
+
+**components/About.tsx**
+
+```jsx
+function About() {
+  return (
+    <div>
+      <h1>This page is about me!</h1>
+    </div>
+  );
+}
+
+export default About;
+```
+
+**components/App.tsx**
+
+```jsx
+import { Outlet } from "react-router-dom";
+import NavBar from "./NavBar";
+
+function App() {
+  return (
+    <div>
+      <h1 className="app-header">My App!</h1>
+      <NavBar />
+      <Outlet />
+    </div>
+  );
+}
+
+export default App;
+```
+
+**components/Dashboard.tsx**
+
+```jsx
+function Dashboard() {
+  return (
+    <div>
+      <h1>Dashboard!</h1>
+    </div>
+  );
+}
+
+export default Dashboard;
+```
+
+**components/Login.tsx**
+
+```jsx
+function Login() {
+  return (
+    <div>
+      <h1>Login</h1>
+      <form>
+        <div>
+          <input type="text" name="username" placeholder="Username" />
+        </div>
+        <div>
+          <input type="password" name="password" placeholder="Password" />
+        </div>
+        <input type="submit" value="Submit" />
+      </form>
+    </div>
+  );
+}
+
+export default Login;
+```
+
+**components/NavBar.tsx**
+
+```jsx
+import { NavLink } from "react-router-dom";
+
+function NavBar() {
+  return (
+    <div className="nav-bar">
+      <NavLink to="/" className="nav-link" end>
+        Home
+      </NavLink>
+      <NavLink to="/dashboard" className="nav-link">
+        Dashboard
+      </NavLink>
+      <NavLink to="/about" className="nav-link">
+        About
+      </NavLink>
+      <NavLink to="/login" className="nav-link">
+        Login
+      </NavLink>
+    </div>
+  );
+}
+
+export default NavBar;
+```
+
+After all those components have been separated into their own files, that leaves
+the **index.tsx** looking like:
+
+```jsx
+import ReactDOM from "react-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import "./index.css";
+
+import App from "./components/App";
+import About from "./components/About";
+import Dashboard from "./components/Dashboard";
+import Login from "./components/Login";
+
+ReactDOM.render(
+  <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<App />}>
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="about" element={<About />} />
+        <Route path="login" element={<Login />} />
+      </Route>
+    </Routes>
+  </BrowserRouter>,
+  document.getElementById("root")
+);
+```
 
 ## Conclusion
 
