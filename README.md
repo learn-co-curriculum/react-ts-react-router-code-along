@@ -236,10 +236,11 @@ route's are children of the `App` route. As children of the `App` route, not
 only can the components be rendered within the `App` component, but the URL
 paths are nested as well.
 
-Meaning, child routes will take on the parent route's path as a prefix. In our
-example, that would mean `Dashboard`'s full path is technically:
-`/ + dashboard = /dashboard`. If the parent `App`'s path was `/app` instead,
-then `Dashboard`'s full path would be `/app + dashboard = /app/dashboard`.
+Meaning, child routes are _relatively pathed_ and will take on the parent
+route's path as a prefix. In our example, that would mean `Dashboard`'s full
+path is technically: `/ + dashboard = /dashboard`. If the parent `App`'s path
+was `/app` instead, then `Dashboard`'s full path would be
+`/app + dashboard = /app/dashboard`.
 
 > **Note**: When nesting routes, the leading `/` in front of the nested paths
 > are unecessary. React Router will add those in automatically.
@@ -318,149 +319,147 @@ React Router provides two components that enable us to trigger our routing:
   re-render our routes, displaying the component that matches the new URL
 
 `NavLink` acts as a superset of `Link`, adding **styling attributes** to a
-rendered element **when it matches the current URL**. `NavLink` works well for
-creating a navigation bar, since it allows us to add styling to indicate which
-link is currently selected. `Link` is a good option for creating standard
-hyperlinks. For this example, we will be using `NavLink`; we will see examples
-of using `Link` in later lessons.
+rendered element **when it matches the current URL**. In other words, `NavLink`
+knows when its link is active. `NavLink` works well for creating a navigation
+bar, since it allows us to add styling to indicate which link is currently
+selected.
+
+`Link` is a good option for creating standard hyperlinks. For this example, we
+will be using `NavLink`; we will see examples of using `Link` in later lessons.
 
 Let's work on adding in the `NavLink` component to our application:
 
 ```jsx
-import React from "react";
-import ReactDOM from "react-dom";
-/* Add NavLink to import */
-import { BrowserRouter, Route, NavLink, Switch } from "react-router-dom";
+// src/index.tsx
 
-/* Add basic styling for NavLinks */
-const linkStyles = {
-  display: "inline-block",
-  width: "50px",
-  padding: "12px",
-  margin: "0 6px 6px",
-  background: "blue",
-  textDecoration: "none",
-  color: "white",
-};
+// Step 1. Import NavLink
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Outlet,
+  NavLink,
+} from "react-router-dom";
 
-/* define the NavBar component */
+// Step 2. Define the NavBar component
 function NavBar() {
   return (
-    <div>
+    <div className="nav-bar">
+      {/* add a className to the wrapper div for styling purposes, we will define this class in the CSS later */}
+      {/* Step 3. Define the NavLink's */}
       <NavLink
+        /* specify where the link should point to */
         to="/"
-        /* set exact so it knows to only set activeStyle when route is deeply equal to link */
-        exact
-        /* add styling to Navlink */
-        style={linkStyles}
-        /* add prop for activeStyle */
-        activeStyle={{
-          background: "darkblue",
-        }}
+        /* add styling to Navlink, we will define this class in the CSS later */
+        className="nav-link"
       >
         Home
       </NavLink>
-      <NavLink
-        to="/about"
-        exact
-        style={linkStyles}
-        activeStyle={{
-          background: "darkblue",
-        }}
-      >
+      <NavLink to="/dashboard" className="nav-link">
+        Dashboard
+      </NavLink>
+      <NavLink to="/about" className="nav-link">
         About
       </NavLink>
-      <NavLink
-        to="/login"
-        exact
-        style={linkStyles}
-        activeStyle={{
-          background: "darkblue",
-        }}
-      >
+      <NavLink to="/login" className="nav-link">
         Login
       </NavLink>
     </div>
   );
 }
 
-function Home() {
-  return <h1>Home!</h1>;
-}
+// .. all other components
 
-function About() {
-  return <h1>This is my about component!</h1>;
-}
-
-function Login() {
-  return (
-    <div>
-      <h1>Login</h1>
-      <form>
-        <div>
-          <input type="text" name="username" placeholder="Username" />
-        </div>
-        <div>
-          <input type="password" name="password" placeholder="Password" />
-        </div>
-        <input type="submit" value="Submit" />
-      </form>
-    </div>
-  );
-}
-
-/* add the NavBar component to our App component */
+// Step 4. Add the NavBar component to our App component underneath the header and above the Outlet
 function App() {
   return (
     <div>
+      <h1 className="app-header">My App!</h1>
       <NavBar />
-      <Switch>
-        <Route path="/about">
-          <About />
-        </Route>
-        <Route path="/login">
-          <Login />
-        </Route>
-        <Route path="/">
-          <Home />
-        </Route>
-      </Switch>
+      <Outlet />
     </div>
   );
 }
 
-ReactDOM.render(
-  <BrowserRouter>
-    <NavBar />
-    <Switch>
-      <Route exact path="/about">
-        <About />
-      </Route>
-      <Route exact path="/login">
-        <Login />
-      </Route>
-      <Route exact path="/">
-        <Home />
-      </Route>
-    </Switch>
-  </BrowserRouter>,
-  document.getElementById("root")
-);
+// ... DOM render
 ```
 
-Load up the browser again and you should see beautiful blue NavLinks that load
-up the desired component. Note that, because we've rendered the `NavBar`
-component outside the `Switch` component, it appears on each page, as desired.
+Load up the browser again and you should see all your links bunched up together.
+While they don't look pretty, they're functional as is. Try it out by clicking
+through all the links and watch as the nested component changes appropriately
+with each one.
 
-For more practice, implement `/signup` and `/messages` routes, NavLinks and
-components.
+Let's make them look better by adding some styling in our `index.css`. We
+already added the class names necessary onto the elements themselves, we just
+need to define the actual classes. Feel free to copy and paste:
+
+```css
+/* src/index.css */
+
+.nav-bar {
+  width: 100%;
+  background-color: beige;
+}
+
+.nav-link {
+  display: inline-block;
+  width: 23.65%;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  font-weight: bold;
+  color: darkseagreen;
+}
+```
+
+Great! They work and look great now, too. However, we're still not taking
+advantage of how `NavLink` components know when they're the active link. So, how
+exactly _do_ the comopnents know? React Router handles this by adding a class of
+`active` onto the active one. We can check this out ourselves by investigating
+the Elements tab in the browser's developer tools and clicking on one of the
+`NavLink`'s:
+
+![Investigating the Elements tab in developer tools](https://imgur.com/JNfKcV5.gif)
+
+We can see the `active` class get added onto the link. To make use of that, all
+we have to do is define and style the `active` class in our `index.css`. We'll
+make ours simple and just change the background color. Again, feel free to copy
+and paste:
+
+```css
+/* src/index.css */
+.active {
+  background-color: rgb(59, 60, 60);
+}
+```
+
+When we try it out again, the active link should have a different background
+color from the rest. Except, wait... the `Home` link always thinks it's active.
+This is because the all the other links start with `/`, so `Home` assumes it's
+active as well.
+
+We can get around that by specifying that the `Home` link should only be
+considered active when the URL is _just_ `/`. To do so, we add the `end` prop
+onto the `NavLink`, like so:
+
+```jsx
+<NavLink
+  to="/"
+  className="nav-link"
+  end
+>
+```
+
+It doesn't take any value, simply providing the prop is enough. Now it should
+only have a different background when we're exactly at `http://localhost:3000/`.
+Pretty nifty!
 
 ### Refactoring
 
-In anticipation of a growing codebase, let's refactor by removing the components
-we defined in `index.js` and placing them in their own files in
-`src/components`. You can also see the completed version of this code in the
-solution branch.
+Now that we've added several components into our app, our `index.tsx` file has
+grown considerably. Let's refactor by removing the components we defined in
+`index.js` and placing them in their own files in `src/components`. You can also
+see the completed version of this code in the solution branch.
 
 ```jsx
 // src/components/Home.js
@@ -615,7 +614,9 @@ You've now seen all the core functionality of React Router required for
 client-side routing! We've met the requirements so that our app can:
 
 - Conditionally render a different component based on the URL (using the
-  `<Route>` and `<Switch>` components)
+  `<Routes>` and `<Route>` components)
+- Nest copmonents within one another (using the `<Route>` and `<Outlet>`
+  components)
 - Change the URL using JavaScript, without making a GET request and reloading
   the HTML document (using the `<Link>` or `<NavLink>` components)
 
@@ -629,5 +630,5 @@ applications.
 
 - [React Router docs][react router docs]
 
-[react router docs]: https://v5.reactrouter.com/web/guides/quick-start
+[react router docs]: https://reactrouter.com/en/main
 [soils]: https://en.wikipedia.org/wiki/Soil_type

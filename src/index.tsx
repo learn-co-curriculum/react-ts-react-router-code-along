@@ -1,7 +1,53 @@
 import ReactDOM from "react-dom";
 import "./index.css";
 
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Outlet,
+  NavLink,
+} from "react-router-dom";
+
+const linkStyles = {
+  display: "inline-block",
+  width: "50px",
+  padding: "12px",
+  margin: "0 6px 6px",
+  background: "blue",
+  textDecoration: "none",
+  color: "white",
+};
+
+const activeLinkStyle = {
+  background: "darkblue",
+};
+
+function NavBar() {
+  return (
+    <div className="nav-bar">
+      {/* Step 3. Define the NavLink's */}
+      <NavLink
+        /* specify where the link should point to */
+        to="/"
+        /* add styling to Navlink, we will define this class in the CSS later */
+        className="nav-link"
+        end
+      >
+        Home
+      </NavLink>
+      <NavLink to="/dashboard" className="nav-link">
+        Dashboard
+      </NavLink>
+      <NavLink to="/about" className="nav-link">
+        About
+      </NavLink>
+      <NavLink to="/login" className="nav-link">
+        Login
+      </NavLink>
+    </div>
+  );
+}
 
 function Dashboard() {
   return (
@@ -40,6 +86,7 @@ function App() {
   return (
     <div>
       <h1 className="app-header">My App!</h1>
+      <NavBar />
       <Outlet />
     </div>
   );

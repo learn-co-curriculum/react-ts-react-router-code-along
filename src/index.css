@@ -12,3 +12,22 @@ body {
   color: rgb(59, 60, 60);
   text-align: center;
 }
+
+.nav-bar {
+  width: 100%;
+  background-color: beige;
+}
+
+.nav-link {
+  display: inline-block;
+  width: 23.65%;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  font-weight: bold;
+  color: darkseagreen;
+}
+
+/* .active {
+  background-color: rgb(59, 60, 60);
+} */
