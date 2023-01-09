@@ -1,16 +1,20 @@
-import React from "react";
 import ReactDOM from "react-dom";
+import "./index.css";
 
-function Home() {
+function Dashboard() {
   return (
     <div>
-      <h1>Home!</h1>
+      <h1>Dashboard!</h1>
     </div>
   );
 }
 
 function App() {
-  return <Home />;
+  return (
+    <div>
+      <h1 className="app-header">My App!</h1>
+    </div>
+  );
 }
 
 ReactDOM.render(<App />, document.getElementById("root"));
